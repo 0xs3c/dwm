@@ -1,7 +1,8 @@
 /* See LICENSE file for copyright and license details. */
 
-
+#include <X11/XF86keysym.h>
 #include "movestack.c"
+
 /* appearance */
 static const unsigned int borderpx  = 2;        /* border pixel of windows */
 static const Gap default_gap        = {.isgap = 1, .realgap = 10, .gappx = 10};
@@ -30,11 +31,11 @@ static const Rule rules[] = {
 	 *	WM_CLASS(STRING) = instance, class
 	 *	WM_NAME(STRING) = title
 	 */
-	/* class     instance  title           tags mask  isfloating  isterminal  noswallow  monitor */
-	{ "Gimp",    NULL,     NULL,           0,         1,          0,           0,        -1 },
-	{ "Firefox", NULL,     NULL,           1 << 8,    0,          0,          -1,        -1 },
-	{ "St",      NULL,     NULL,           0,         0,          1,           0,        -1 },
-	{ NULL,      NULL,     "Event Tester", 0,         0,          0,           1,        -1 }, /* xev */
+	/* class     		instance  title           tags mask  isfloating  isterminal  noswallow  monitor */
+	{ "Gimp",    		NULL,     NULL,           0,         1,          0,           0,        -1 },
+	{ "Firefox", 		NULL,     NULL,           1 << 8,    0,          0,          -1,        -1 },
+	{ "st-256color",     	NULL,     NULL,           0,         0,          1,           0,        -1 },
+	{ NULL,      		NULL,     "Event Tester", 0,         0,          0,           1,        -1 }, /* xev */
 };
 
 /* layout(s) */
@@ -71,8 +72,16 @@ static const char *scratchpadcmd[] = { "st", "-t", scratchpadname, "-g", "120x34
 
 static const Key keys[] = {
 	/* modifier                     key        function        argument */
+
+        { 0,             XF86XK_AudioLowerVolume,  spawn,          SHCMD("/usr/bin/pactl set-sink-volume @DEFAULT_SINK@ -10%")   },
+        { 0,             XF86XK_AudioMute,         spawn,          SHCMD("/usr/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle")  },
+        { 0,             XF86XK_AudioRaiseVolume,  spawn,          SHCMD("/usr/bin/pactl set-sink-volume @DEFAULT_SINK@ +10%")   },
+
+        { 0,             XF86XK_MonBrightnessUp,   spawn,          SHCMD("xbacklight -inc 10%")  },
+        { 0,             XF86XK_MonBrightnessDown, spawn,          SHCMD("xbacklight -dec 10%")  },
+
 	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
-	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
+	{ MODKEY,                       XK_Return, spawn,          {.v = termcmd } },
 	{ MODKEY,                       XK_grave,  togglescratch,  {.v = scratchpadcmd } },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
@@ -83,9 +92,9 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.05} },
 	{ MODKEY|ShiftMask,             XK_j,      movestack,      {.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_k,      movestack,      {.i = -1 } },
-	{ MODKEY,                       XK_Return, zoom,           {0} },
+	{ MODKEY|ShiftMask,             XK_Return, zoom,           {0} },
 	{ MODKEY,                       XK_Tab,    view,           {0} },
-	{ MODKEY|ShiftMask,             XK_c,      killclient,     {0} },
+	{ ControlMask,                  XK_Escape, killclient,     {0} },
 	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
 	{ MODKEY,                       XK_f,      setlayout,      {.v = &layouts[1]} },
 	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[2]} },
